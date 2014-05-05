@@ -1,0 +1,695 @@
+--Vishnu Meduri
+--Golf_Club DB sql
+
+--Create Statements
+
+--golf_club
+
+CREATE TABLE golf_club
+
+(
+golf_club_id integer NOT NULL,
+
+golf_club_name character varying(255),
+  golf_club_year_established date,
+
+golf_club_address character varying(255),
+  golf_club_other_details character varying(255),
+  
+CONSTRAINT pk_golf_club_id PRIMARY KEY (golf_club_id)
+
+);
+
+
+
+--membership_type
+
+CREATE TABLE membership_type
+
+(
+
+membership_type_id integer NOT NULL,
+  
+membership_type_anual_fees numeric,
+
+membership_type_description character varying(255),
+
+CONSTRAINT pk_membership_type_code PRIMARY KEY (membership_type_id)
+
+);
+
+
+--member
+
+CREATE TABLE member
+
+(
+member_id integer NOT NULL,
+golf_club_id integer,
+membership_type_id integer,
+member_fees_due_date date,
+member_full_name character varying(255),
+member_phone integer,
+member_email character varying(255),
+
+member_address character varying(255),
+member_other_details character varying(255),
+CONSTRAINT pk_member_id PRIMARY KEY (member_id),
+CONSTRAINT member_golf_club_id_fkey FOREIGN KEY (golf_club_id)
+REFERENCES golf_club (golf_club_id),
+
+CONSTRAINT member_membership_type_id_fkey FOREIGN KEY (membership_type_id)
+ 
+REFERENCES membership_type (membership_type_id)
+);
+
+
+--ref_lesson_status
+
+CREATE TABLE ref_lesson_status
+
+(
+  
+ref_lesson_status_id integer NOT NULL,
+
+ref_lesson_status_description character varying(255),
+
+CONSTRAINT pk_lesson_status_cod PRIMARY KEY (ref_lesson_status_id)
+
+);
+
+--ref_payment_status
+
+CREATE TABLE ref_payment_status
+
+(
+ref_payment_id integer NOT NULL,
+
+ref_payment_description character varying(255),
+
+CONSTRAINT pk_payment_method_code PRIMARY KEY (ref_payment_id)
+
+);
+
+--payment
+
+CREATE TABLE payment
+
+(
+
+payment_id integer NOT NULL,
+ref_payment_id integer,
+member_id integer,
+
+payment_valid_from_date date,
+payment_other_details character varying(255),
+CONSTRAINT pk_payment_id PRIMARY KEY (payment_id),
+CONSTRAINT payment_member_id_fkey FOREIGN KEY (member_id)
+REFERENCES member (member_id),
+
+CONSTRAINT payment_ref_payment_id_fkey FOREIGN KEY (ref_payment_id)
+
+REFERENCES ref_payment_status (ref_payment_id)
+);
+
+
+--field
+
+CREATE TABLE field
+
+(
+
+field_id integer NOT NULL,
+
+golf_club_id integer,
+
+field_name character varying(255),
+
+field_other_details character varying(255),
+
+CONSTRAINT pk_field_id PRIMARY KEY (field_id),
+
+CONSTRAINT field_golf_club_id_fkey FOREIGN KEY (golf_club_id)
+
+REFERENCES golf_club (golf_club_id)
+);
+
+--locker
+
+CREATE TABLE locker
+
+(
+locker_id integer NOT NULL,
+golf_club_id integer,
+locker_rental_amount numeric,
+locker_other_details character varying(255),
+
+locker_aviable boolean,
+CONSTRAINT pk_locker_id PRIMARY KEY (locker_id),
+CONSTRAINT locker_golf_club_id_fkey FOREIGN KEY (golf_club_id)
+REFERENCES golf_club (golf_club_id)
+);
+
+
+
+--member_locker
+
+CREATE TABLE member_locker
+
+(
+member_locker_id integer NOT NULL,
+locker_id integer,
+member_id integer,
+CONSTRAINT pk_member_locker_id PRIMARY KEY (member_locker_id),
+CONSTRAINT member_locker_locker_id_fkey FOREIGN KEY (locker_id)
+
+REFERENCES locker (locker_id),
+CONSTRAINT member_locker_member_id_fkey FOREIGN KEY (member_id)
+
+REFERENCES member (member_id)
+);
+
+--pro_shop
+
+CREATE TABLE pro_shop
+
+(
+
+pro_shop_id integer NOT NULL,
+golf_club_id integer,
+pro_shop_name character varying(255),
+pro_shop_other_details character varying(255),
+CONSTRAINT pk_pro_shop_id PRIMARY KEY (pro_shop_id),
+
+CONSTRAINT pro_shop_golf_club_id_fkey FOREIGN KEY (golf_club_id)
+      
+REFERENCES golf_club (golf_club_id)
+);
+
+--professional
+
+CREATE TABLE professional
+
+(
+
+professional_id integer NOT NULL,
+golf_club_id integer,
+professional_date_of_birth date,
+professional_gender character varying(1),
+professional_full_name character varying(255),
+professional_other_details character varying(255),
+CONSTRAINT pk_pro_id PRIMARY KEY (professional_id),
+CONSTRAINT professional_golf_club_id_fkey FOREIGN KEY (golf_club_id)
+      
+REFERENCES golf_club (golf_club_id)
+);
+
+
+--member_lesson
+
+CREATE TABLE member_lesson
+
+(
+member_lesson_id integer NOT NULL,
+
+professional_id integer,
+member_id integer,
+ref_lesson_status_id integer,
+field_id integer,
+
+member_lesson_start_time timestamp with time zone,
+
+CONSTRAINT pk_member_lesson_id PRIMARY KEY (member_lesson_id),
+CONSTRAINT member_lesson_field_id_fkey FOREIGN KEY (field_id)
+REFERENCES field (field_id),
+CONSTRAINT member_lesson_member_id_fkey FOREIGN KEY (member_id)
+
+REFERENCES member (member_id),
+CONSTRAINT member_lesson_professional_id_fkey FOREIGN KEY (professional_id)
+     
+REFERENCES professional (professional_id),
+CONSTRAINT member_lesson_ref_lesson_status_id_fkey FOREIGN KEY(ref_lesson_status_id)
+REFERENCES ref_lesson_status (ref_lesson_status_id)
+);
+
+
+
+
+
+-- Insert Statements--
+
+
+--Golf_club table insertions
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (1, 'jhons park', '1991-01-03', 'new york', 'good club');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (2, 'mickey', '1941-01-03', 'california','professional club');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (3, 'harry field', '2001-12-05', 'san diego', 'child club');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (4, 'big field','2000-08-13','los angeles','club');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (5, 'right park','2004-08-13','san francis',' ' );
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (6, 'left park','2007-03-14','new jersey',' ');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (7, 'mouse field','1990-09-15','houston','very good field');
+
+INSERT INTO golf_club(
+            golf_club_id, golf_club_name, golf_club_year_established, golf_club_address, 
+            golf_club_other_details)
+    VALUES (8, 'san jose field','1994-09-15','san jose','very good field');
+
+
+
+
+--membership_type insert Statements
+
+INSERT INTO membership_type(
+            membership_type_id, membership_type_anual_fees, membership_type_description)
+    VALUES (1,400,'gold');
+
+INSERT INTO membership_type(
+            membership_type_id, membership_type_anual_fees, membership_type_description)
+    VALUES (2,300,'silver');
+
+INSERT INTO membership_type(
+            membership_type_id, membership_type_anual_fees, membership_type_description)
+    VALUES (3,200,'bronze');
+
+INSERT INTO membership_type(
+            membership_type_id, membership_type_anual_fees, membership_type_description)
+    VALUES (4,600,'platinum');
+
+INSERT INTO membership_type(
+            membership_type_id, membership_type_anual_fees, membership_type_description)
+    VALUES (5,100,'normal');
+
+
+
+--member tabe Insert Statements
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (1,1,1,'2011-01-01','juan hernandez',5555555,'juan@gmail.com','street 122',' ');
+
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (2,1,1,'2011-01-01','cristina hernandez',5555555,'cristina@gmail.com','street 122',' ');
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (4,5,5,'2011-01-01','jen jensen',5555555,'jen@gmail.com','avenue 177',' ');
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (5,4,4,'2012-01-01','weak wanwright',0,'weak@gmail.com','avenue 177',' ');
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (6,3,3,'2012-01-01','daniel one',0,'daniel@gmail.com','avenue 11',' ');
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (7,2,2,'2011-01-01','josh rass',0,'josh@gmail.com','avenue 10',' ');
+
+INSERT INTO member(
+            member_id, golf_club_id, membership_type_id, member_fees_due_date, 
+            member_full_name, member_phone, member_email, member_address, 
+            member_other_details)
+    VALUES (8,1,1,'2010-01-01','vanessa rain',0,'vanessa@gmail.com','avenue 7',' ');
+
+
+
+
+--ref_lesson_status insert statements
+
+INSERT INTO ref_lesson_status(
+            ref_lesson_status_id, ref_lesson_status_description)
+    VALUES (1,'complete');
+
+INSERT INTO ref_lesson_status(
+            ref_lesson_status_id, ref_lesson_status_description)
+    VALUES (2,'incomplete');
+
+INSERT INTO ref_lesson_status(
+            ref_lesson_status_id, ref_lesson_status_description)
+    VALUES (3,'cancelled');
+
+
+
+--ref_payment_status insert statements
+
+INSERT INTO ref_payment_status(
+            ref_payment_id, ref_payment_description)
+    VALUES (1,'credit');
+
+
+INSERT INTO ref_payment_status(
+            ref_payment_id, ref_payment_description)
+    VALUES (2,'cash');
+
+
+
+
+--payment insert statements
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (1,1,7,'2009-02-01','incompleted');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (2,2,8,'2009-03-01','complete');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (3,2,6,'2009-05-04','cancelled');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (4,2,2,'2009-10-01','completed');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (5,1,1,'2009-12-01','completed');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (6,2,6,'2008-12-05','completed');
+
+INSERT INTO payment(
+            payment_id, ref_payment_id, member_id, payment_valid_from_date, 
+            payment_other_details)
+    VALUES (7,1,4,'2009-07-02',' ');
+
+
+
+-- Field table insertions
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (31, 1, 'jose field',' ');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (32, 2, 'jumper field', 'good field');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (33, 3, 'cellular field','ood field');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (34, 4, 'our field', 'best field');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (35, 5, 'exit field',' ');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (36, 6, 'coca cola field','jumper field');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (37, 7, 'pin field', 'good field');
+
+INSERT INTO field(
+            field_id, golf_club_id, field_name, field_other_details)
+    VALUES (38, 8, 'right field',' ');
+
+
+
+--locker insertions
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (40, 1, 15, 'good locker','FALSE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (41, 5, 16, 'big locker','FALSE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (42, 5, 16, 'big locker','FALSE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (43, 7, 10, 'small locker' , 'TRUE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (44, 2, 10, 'good locker', 'TRUE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (45, 3, 14, 'good locker','FALSE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (46, 6, 12, 'good locker',  'TRUE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (47, 4, 15, 'big locker',  'FALSE');
+
+INSERT INTO locker(
+            locker_id, golf_club_id, locker_rental_amount, locker_other_details, 
+            locker_aviable)
+    VALUES (48, 4, 15, 'big locker',  'TRUE');
+
+
+
+--member_locker insert statements
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (31,40,8);
+
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (32,41,4);
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (33,42,4);
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (34,47,5);
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (35,40,2);
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (36,45,6);
+
+INSERT INTO member_locker(
+            member_locker_id, locker_id, member_id)
+    VALUES (37,40,1);
+
+
+
+--pro-shop insert statements
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (10,3,'jhon','good shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (11,1,'jennifer','good shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (12,4,'riya','shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (13,6,'michel',' jump shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (14,7,'texeira','very good shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (15,7,'texeira II','very good shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (16,8,'rain','very good shop');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (17,5,'los4',' ');
+
+INSERT INTO pro_shop(
+            pro_shop_id, golf_club_id, pro_shop_name, pro_shop_other_details)
+    VALUES (18,3,'T.H.E',' ');
+
+
+--professional insert statements
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (21,1,'1991-01-01','m','jhon apple',' ');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (22,2,'1992-01-01','m','jose diaz',' ');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (23,3,'1980-01-01','m','david faitelson',' ');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (24,4,'1981-05-12','m','paul wright',' ');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (25,5,'1982-06-13','m','tiger woods','good professional');
+
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (26,6,'1988-08-16','f','lorena ochoa','good professional');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (27,7,'1989-08-19','m','shin shan',' ');
+
+INSERT INTO professional(
+            professional_id, golf_club_id, professional_date_of_birth, professional_gender, 
+            professional_full_name, professional_other_details)
+    VALUES (28,8,'1984-11-20','m','prince',' ');
+
+
+
+--member_lesson insert statements
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (1,21,1,1,31,'2009-03-03 11:30:00-08');
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (2,22,7,2,32,'2009-02-02 11:30:00-08');
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (3,23,6,1,33,'2009-02-01 11:30:00-08');
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (4,24,5,3,34,'2009-01-09 13:00:00-08');
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (5,25,4,2,35,'2009-01-18 13:00:00-08');
+
+INSERT INTO member_lesson(
+            member_lesson_id, professional_id, member_id, ref_lesson_status_id, 
+            field_id, member_lesson_start_time)
+    VALUES (6,21,1,1,31,'2009-03-03 14:00:00-08');
+
+
+
+
+--Triggers
+
+-- Function: block_locker()
+
+CREATE OR REPLACE FUNCTION block_locker()
+  RETURNS trigger AS
+$BODY$
+    BEGIN
+	update locker set locker_aviable = FALSE where new.locker_id = locker_id;
+	return new;
+    END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+
+
+-- Function: unlock_locker()
+
+CREATE OR REPLACE FUNCTION unlock_locker()
+  RETURNS trigger AS
+$BODY$
+    BEGIN
+	update locker set locker_aviable = TRUE where old.locker_id = locker_id;
+	return old;
+    END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+
+
